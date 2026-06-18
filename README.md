@@ -21,7 +21,6 @@ The neural network acts as a data-driven surrogate for a standard 2-Degree-of-Fr
 * **Time-Series Prediction:** Forecasts the settling time and vibration damping of the sprung and unsprung masses over a defined time horizon.
 
 ## 🛠️ Getting Started
-*(Provide 2-3 simple steps here on how someone can run your `project-1.ipynb` notebook and view the results. For example:)*
 1. Clone the repository.
 2. Ensure you have the required dependencies installed (`pip install -r requirements.txt`).
 3. Open `project-1.ipynb` to view the model training and road profile predictions.
