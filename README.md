@@ -1,29 +1,87 @@
-# NNCD
-Data-driven neural network surrogate model simulating 2-DOF quarter-car suspension dynamics to predict transient vibration responses across varied road profiles.
-
 # Neural Network Surrogate Modeling for Quarter-Car Suspension Dynamics
 
-## 📌 Project Overview
-This project applies deep learning to model and predict the dynamic behavior of a vehicle's suspension system. By training a neural network to mimic a mathematical **Quarter-Car Model**, the system effectively learns the complex non-linear dynamics of vehicle ride comfort and road handling. 
+![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)
 
-Once the network has successfully learned the baseline system, it is deployed to predict the vehicle's transient response across various deterministic road profiles (e.g., sine waves, bumps, and step inputs) over time.
+## 📌 Project Overview
+This project applies deep learning to model and predict the dynamic behavior of a vehicle's suspension system. By training a **Physics-Informed Neural Network (PINN)** to mimic a mathematical **Quarter-Car Model**, the system effectively learns the complex non-linear dynamics of vehicle ride comfort and road handling. 
+
+Once the network has successfully learned the baseline system (guided by both empirical data and physical state-space equations), it is deployed to predict the vehicle's transient response across various deterministic and unseen road profiles (e.g., sine waves, bumps, potholes, and step inputs) over time.
 
 ## ⚙️ System Architecture & Vehicle Dynamics
-The neural network acts as a data-driven surrogate for a standard 2-Degree-of-Freedom (2-DOF) mechanical system. The physical parameters considered in the training data include:
-* **Sprung Mass (Vehicle Body):** Representing the chassis and passenger load.
-* **Unsprung Mass (Wheel/Axle):** Representing the tire and wheel assembly.
-* **Suspension System:** Modeled with a primary spring stiffness and damping coefficient.
-* **Tire Dynamics:** Accounting for tire stiffness interacting directly with the road surface.
+The neural network acts as a data-driven surrogate for a standard 2-Degree-of-Freedom (2-DOF) mechanical system. The physical parameters considered include:
+* **Sprung Mass ($m_s$):** Representing the chassis and passenger load (250 kg).
+* **Unsprung Mass ($m_u$):** Representing the tire and wheel assembly (35 kg).
+* **Suspension System:** Primary spring stiffness ($k_s$) and damping coefficient ($b_s$).
+* **Tire Dynamics:** Accounting for tire stiffness ($k_u$) interacting directly with the road surface.
 
-## 🚀 Key Features
-* **System Identification:** Neural network trained to map road disturbance inputs to suspension displacement and acceleration outputs.
-* **Road Profile Simulation:** Capable of predicting vehicle behavior across multiple unseen road conditions (Sine, Step, Bump).
-* **Time-Series Prediction:** Forecasts the settling time and vibration damping of the sprung and unsprung masses over a defined time horizon.
+## 🗂️ Project Structure
+
+The project has been refactored for modularity and ease of use:
+
+```text
+NNCD/
+├── src/
+│   ├── config.py             # Physical parameters and system matrices
+│   ├── data_generation.py    # Generates ground-truth, robust, and unseen test datasets
+│   ├── model.py              # PyTorch definition of the QuarterCarNet
+│   ├── train.py              # Training loop with Physics-Informed (PINN) loss
+│   └── evaluate.py           # Evaluation logic to simulate and plot against ground truth
+├── images/                   # Output plots and comparison visuals
+├── project-1.ipynb           # High-level presentation and workflow notebook
+├── requirements.txt          # Python dependencies
+└── README.md
+```
 
 ## 🛠️ Getting Started
-1. Clone the repository.
-2. Ensure you have the required dependencies installed (`pip install -r requirements.txt`).
-3. Open `project-1.ipynb` to view the model training and road profile predictions.
+
+### 1. Installation
+Clone the repository and set up a virtual environment:
+
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd NNCD
+
+# Create and activate a virtual environment (optional but recommended)
+python3 -m venv venv
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 2. Generating Data
+The neural network requires data to train on. Generate the datasets (this creates standard, robust, and test `.csv` files locally):
+
+```bash
+python3 src/data_generation.py
+```
+
+### 3. Training the Model
+Train the `QuarterCarNet` using the Physics-Informed Neural Network approach. 
+
+```bash
+python3 src/train.py
+```
+*This will output a `model_pinn.pth` file and a training curve plot.*
+
+### 4. Evaluation
+Test the trained surrogate model on unseen road profiles:
+
+```bash
+python3 src/evaluate.py
+```
+*This will generate an `evaluation.png` plot comparing the Neural Network's predictions against the true physics engine.*
+
+### Jupyter Notebook
+Alternatively, you can walk through the entire pipeline interactively using the clean presentation notebook:
+```bash
+jupyter notebook project-1.ipynb
+```
 
 ## 📊 Results
+
+The model performs exceptionally well even on previously unseen datasets, simulating both suspension deflection and body velocity to near-perfect accuracy when compared with the ground truth mathematical model.
+
 ![Result Graph](images/unseen_road_doublebump_math_model_test.png)
